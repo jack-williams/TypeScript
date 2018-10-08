@@ -11980,16 +11980,50 @@ namespace ts {
                         // Two conditional types 'T1 extends U1 ? X1 : Y1' and 'T2 extends U2 ? X2 : Y2' are related if
                         // one of T1 and T2 is related to the other, U1 and U2 are identical types, X1 is related to X2,
                         // and Y1 is related to Y2.
-                        if (isTypeIdenticalTo((<ConditionalType>source).extendsType, (<ConditionalType>target).extendsType) &&
-                            (isRelatedTo((<ConditionalType>source).checkType, (<ConditionalType>target).checkType) || isRelatedTo((<ConditionalType>target).checkType, (<ConditionalType>source).checkType))) {
-                            if (result = isRelatedTo(getTrueTypeFromConditionalType(<ConditionalType>source), getTrueTypeFromConditionalType(<ConditionalType>target), reportErrors)) {
-                                result &= isRelatedTo(getFalseTypeFromConditionalType(<ConditionalType>source), getFalseTypeFromConditionalType(<ConditionalType>target), reportErrors);
+                        if (isTypeIdenticalTo((<ConditionalType>source).extendsType, (<ConditionalType>target).extendsType)) {
+                            // Invariance
+                            if (isTypeIdenticalTo((<ConditionalType>source).checkType, (<ConditionalType>target).checkType)) {
+                                if (result = isRelatedTo(getTrueTypeFromConditionalType(<ConditionalType>source),
+                                                         getTrueTypeFromConditionalType(<ConditionalType>target), reportErrors)) {
+                                    result &= isRelatedTo(getFalseTypeFromConditionalType(<ConditionalType>source), getFalseTypeFromConditionalType(<ConditionalType>target), reportErrors);
+                                }
+                                if (result) {
+                                    errorInfo = saveErrorInfo;
+                                    return result;
+                                }
                             }
-                            if (result) {
-                                errorInfo = saveErrorInfo;
-                                return result;
+                            // Covariance
+                            else if (isRelatedTo((<ConditionalType>source).checkType, (<ConditionalType>target).checkType)) {
+                                if ((result = isRelatedTo(getTrueTypeFromConditionalType(<ConditionalType>source),
+                                                          getTrueTypeFromConditionalType(<ConditionalType>target), reportErrors)) &&
+                                    (result &= isRelatedTo(getTrueTypeFromConditionalType(<ConditionalType>source),
+                                                           getFalseTypeFromConditionalType(<ConditionalType>target), reportErrors))
+                                   ) {
+                                    result &= isRelatedTo(getFalseTypeFromConditionalType(<ConditionalType>source),
+                                                          getFalseTypeFromConditionalType(<ConditionalType>target), reportErrors);
+                                }
+                                if (result) {
+                                    errorInfo = saveErrorInfo;
+                                    return result;
+                                }
+                            }
+                            // Contravariance
+                            else if (!(<ConditionalType>target).root.isDistributive && isRelatedTo((<ConditionalType>target).checkType, (<ConditionalType>source).checkType)) {
+                                if ((result = isRelatedTo(getTrueTypeFromConditionalType(<ConditionalType>source),
+                                                          getTrueTypeFromConditionalType(<ConditionalType>target), reportErrors)) &&
+                                    (result &= isRelatedTo(getFalseTypeFromConditionalType(<ConditionalType>source),
+                                                           getTrueTypeFromConditionalType(<ConditionalType>target), reportErrors))
+                                   ) {
+                                    result &= isRelatedTo(getFalseTypeFromConditionalType(<ConditionalType>source),
+                                                          getFalseTypeFromConditionalType(<ConditionalType>target), reportErrors);
+                                }
+                                if (result) {
+                                    errorInfo = saveErrorInfo;
+                                    return result;
+                                }
                             }
                         }
+                        return Ternary.False;
                     }
                     else if (relation !== definitelyAssignableRelation) {
                         const distributiveConstraint = getConstraintOfDistributiveConditionalType(<ConditionalType>source);
