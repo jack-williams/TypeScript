@@ -7450,7 +7450,7 @@ namespace ts {
                 const constraint = simplified === type.checkType ? getConstraintOfType(simplified) : simplified;
                 if (constraint && constraint !== type.checkType) {
                     const mapper = makeUnaryTypeMapper(type.root.checkType, constraint);
-                    const instantiated = getConditionalTypeInstantiation(type, combineTypeMappers(mapper, type.mapper));
+                    const instantiated = getConditionalTypeInstantiation(type, combineTypeMappers(mapper, type.mapper), /*approx*/true);
                     if (!(instantiated.flags & TypeFlags.Never)) {
                         return instantiated;
                     }
@@ -10027,7 +10027,7 @@ namespace ts {
             return type.flags & TypeFlags.Substitution ? (<SubstitutionType>type).typeVariable : type;
         }
 
-        function getConditionalType(root: ConditionalRoot, mapper: TypeMapper | undefined): Type {
+        function getConditionalType(root: ConditionalRoot, mapper: TypeMapper | undefined, approx: boolean = false): Type {
             const checkType = instantiateType(root.checkType, mapper);
             const extendsType = instantiateType(root.extendsType, mapper);
             if (checkType === wildcardType || extendsType === wildcardType) {
@@ -10061,6 +10061,9 @@ namespace ts {
                 // possible (the wildcard type is assignable to and from all types). If those are not related,
                 // then no instantiations will be and we can just return the false branch type.
                 if (!isTypeAssignableTo(getPermissiveInstantiation(checkType), getPermissiveInstantiation(inferredExtendsType))) {
+                    if (approx) {
+                        return getUnionType([instantiateType(root.trueType, combinedMapper || mapper), instantiateType(root.falseType, mapper)]);
+                    }
                     return instantiateType(root.falseType, mapper);
                 }
                 // Return trueType for a definitely true extends check. We check instantiations of the two
@@ -10941,7 +10944,7 @@ namespace ts {
             return result;
         }
 
-        function getConditionalTypeInstantiation(type: ConditionalType, mapper: TypeMapper): Type {
+        function getConditionalTypeInstantiation(type: ConditionalType, mapper: TypeMapper, approx: boolean = false): Type {
             const root = type.root;
             if (root.outerTypeParameters) {
                 // We are instantiating a conditional type that has one or more type parameters in scope. Apply the
@@ -10952,7 +10955,7 @@ namespace ts {
                 let result = root.instantiations!.get(id);
                 if (!result) {
                     const newMapper = createTypeMapper(root.outerTypeParameters, typeArguments);
-                    result = instantiateConditionalType(root, newMapper);
+                    result = instantiateConditionalType(root, newMapper, approx);
                     root.instantiations!.set(id, result);
                 }
                 return result;
@@ -10960,7 +10963,7 @@ namespace ts {
             return type;
         }
 
-        function instantiateConditionalType(root: ConditionalRoot, mapper: TypeMapper): Type {
+        function instantiateConditionalType(root: ConditionalRoot, mapper: TypeMapper, approx: boolean = false): Type {
             // Check if we have a conditional type where the check type is a naked type parameter. If so,
             // the conditional type is distributive over union types and when T is instantiated to a union
             // type A | B, we produce (A extends U ? X : Y) | (B extends U ? X : Y).
@@ -10968,10 +10971,10 @@ namespace ts {
                 const checkType = <TypeParameter>root.checkType;
                 const instantiatedType = mapper(checkType);
                 if (checkType !== instantiatedType && instantiatedType.flags & (TypeFlags.Union | TypeFlags.Never)) {
-                    return mapType(instantiatedType, t => getConditionalType(root, createReplacementMapper(checkType, t, mapper)));
+                    return mapType(instantiatedType, t => getConditionalType(root, createReplacementMapper(checkType, t, mapper), approx));
                 }
             }
-            return getConditionalType(root, mapper);
+            return getConditionalType(root, mapper, approx);
         }
 
         function instantiateType(type: Type, mapper: TypeMapper | undefined): Type;
