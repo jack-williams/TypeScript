@@ -33,3 +33,44 @@ type T3<T> = { x: T }
 >x : Symbol(x, Decl(typeAliasesForObjectTypes.ts, 13, 14))
 >T : Symbol(T, Decl(typeAliasesForObjectTypes.ts, 13, 8))
 
+
+// Repro from #29991
+
+const a: Required<{ a?: 1; x: 1 }> = { a: 1, x: 1 };
+>a : Symbol(a, Decl(typeAliasesForObjectTypes.ts, 18, 5))
+>Required : Symbol(Required, Decl(lib.es5.d.ts, --, --))
+>a : Symbol(a, Decl(typeAliasesForObjectTypes.ts, 18, 19))
+>x : Symbol(x, Decl(typeAliasesForObjectTypes.ts, 18, 26))
+>a : Symbol(a, Decl(typeAliasesForObjectTypes.ts, 18, 38))
+>x : Symbol(x, Decl(typeAliasesForObjectTypes.ts, 18, 44))
+
+const b: Required<{ b?: 1; x: 1 }> = { b: 1, x: 1 };
+>b : Symbol(b, Decl(typeAliasesForObjectTypes.ts, 19, 5))
+>Required : Symbol(Required, Decl(lib.es5.d.ts, --, --))
+>b : Symbol(b, Decl(typeAliasesForObjectTypes.ts, 19, 19))
+>x : Symbol(x, Decl(typeAliasesForObjectTypes.ts, 19, 26))
+>b : Symbol(b, Decl(typeAliasesForObjectTypes.ts, 19, 38))
+>x : Symbol(x, Decl(typeAliasesForObjectTypes.ts, 19, 44))
+
+export let A = a;
+>A : Symbol(A, Decl(typeAliasesForObjectTypes.ts, 20, 10))
+>a : Symbol(a, Decl(typeAliasesForObjectTypes.ts, 18, 5))
+
+export let B = b;
+>B : Symbol(B, Decl(typeAliasesForObjectTypes.ts, 21, 10))
+>b : Symbol(b, Decl(typeAliasesForObjectTypes.ts, 19, 5))
+
+A = b; // No Error
+>A : Symbol(A, Decl(typeAliasesForObjectTypes.ts, 20, 10))
+>b : Symbol(b, Decl(typeAliasesForObjectTypes.ts, 19, 5))
+
+B = a; // No Error
+>B : Symbol(B, Decl(typeAliasesForObjectTypes.ts, 21, 10))
+>a : Symbol(a, Decl(typeAliasesForObjectTypes.ts, 18, 5))
+
+a.b; // Property 'b' does not exist on type 'Required<{ a?: 1; x: 1; }>'.
+>a : Symbol(a, Decl(typeAliasesForObjectTypes.ts, 18, 5))
+
+b.a; // Property 'a' does not exist on type 'Required<{ b?: 1; x: 1; }>'.
+>b : Symbol(b, Decl(typeAliasesForObjectTypes.ts, 19, 5))
+
