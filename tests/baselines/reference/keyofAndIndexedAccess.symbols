@@ -1219,7 +1219,7 @@ function f91<T, K extends keyof T>(x: T, y: T[keyof T], z: T[K]) {
 >T : Symbol(T, Decl(keyofAndIndexedAccess.ts, 313, 13))
 >K : Symbol(K, Decl(keyofAndIndexedAccess.ts, 313, 15))
 
-    let a: {};
+    let a: unknown;
 >a : Symbol(a, Decl(keyofAndIndexedAccess.ts, 314, 7))
 
     a = x;
@@ -1249,7 +1249,7 @@ function f92<T, K extends keyof T>(x: T, y: T[keyof T], z: T[K]) {
 >T : Symbol(T, Decl(keyofAndIndexedAccess.ts, 320, 13))
 >K : Symbol(K, Decl(keyofAndIndexedAccess.ts, 320, 15))
 
-    let a: {} | null | undefined;
+    let a: unknown;
 >a : Symbol(a, Decl(keyofAndIndexedAccess.ts, 321, 7))
 
     a = x;
@@ -2179,7 +2179,7 @@ function fn<T extends I, K extends keyof T>(o: T, k: K) {
 >k : Symbol(k, Decl(keyofAndIndexedAccess.ts, 609, 49))
 >K : Symbol(K, Decl(keyofAndIndexedAccess.ts, 609, 24))
 
-    take<{} | null | undefined>(o[k]);
+    take<unknown>(o[k]);
 >take : Symbol(take, Decl(keyofAndIndexedAccess.ts, 605, 1))
 >o : Symbol(o, Decl(keyofAndIndexedAccess.ts, 609, 44))
 >k : Symbol(k, Decl(keyofAndIndexedAccess.ts, 609, 49))
@@ -2202,7 +2202,7 @@ class Unbounded<T> {
 >T : Symbol(T, Decl(keyofAndIndexedAccess.ts, 616, 16))
 >T : Symbol(T, Decl(keyofAndIndexedAccess.ts, 616, 16))
 
-        let y: {} | undefined | null = x;
+        let y: unknown = x;
 >y : Symbol(y, Decl(keyofAndIndexedAccess.ts, 618, 11))
 >x : Symbol(x, Decl(keyofAndIndexedAccess.ts, 617, 8))
     }

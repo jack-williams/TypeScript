@@ -1,0 +1,100 @@
+=== tests/cases/compiler/compareTypeParameterWithoutConstraint.ts ===
+// @strict
+
+const isNum = (v: unknown) => {
+>isNum : (v: unknown) => number
+>(v: unknown) => {  if (typeof v !== 'number') throw new Error('Not a number');  return v;} : (v: unknown) => number
+>v : unknown
+
+  if (typeof v !== 'number') throw new Error('Not a number');
+>typeof v !== 'number' : boolean
+>typeof v : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
+>v : unknown
+>'number' : "number"
+>new Error('Not a number') : Error
+>Error : ErrorConstructor
+>'Not a number' : "Not a number"
+
+  return v;
+>v : number
+
+};
+const isString = (v: unknown) => {
+>isString : (v: unknown) => string
+>(v: unknown) => {  if (typeof v !== 'string') throw new Error('Not a string');  return v;} : (v: unknown) => string
+>v : unknown
+
+  if (typeof v !== 'string') throw new Error('Not a string');
+>typeof v !== 'string' : boolean
+>typeof v : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
+>v : unknown
+>'string' : "string"
+>new Error('Not a string') : Error
+>Error : ErrorConstructor
+>'Not a string' : "Not a string"
+
+  return v;
+>v : string
+
+};
+
+// no errors on comparison
+function makeExampleValue<T>(validator: (v: unknown) => T): unknown {
+>makeExampleValue : <T>(validator: (v: unknown) => T) => unknown
+>validator : (v: unknown) => T
+>v : unknown
+
+  if (validator === isNum) return 42;
+>validator === isNum : boolean
+>validator : (v: unknown) => T
+>isNum : (v: unknown) => number
+>42 : 42
+
+  if (validator === isString) return 'something';
+>validator === isString : boolean
+>validator : (v: unknown) => T
+>isString : (v: unknown) => string
+>'something' : "something"
+
+  throw new Error('unknown type');
+>new Error('unknown type') : Error
+>Error : ErrorConstructor
+>'unknown type' : "unknown type"
+}
+
+/*
+ * check and check2 should type-check identically
+ */
+
+const num = 1;
+>num : 1
+>1 : 1
+
+function check<T>(x: T) {
+>check : <T>(x: T) => boolean
+>x : T
+
+  return x === num; // no error
+>x === num : boolean
+>x : T
+>num : 1
+}
+check(num);
+>check(num) : boolean
+>check : <T>(x: T) => boolean
+>num : 1
+
+function check2<T extends unknown>(x: T) {
+>check2 : <T extends unknown>(x: T) => boolean
+>x : T
+
+  return x === num; // no error
+>x === num : boolean
+>x : T
+>num : 1
+}
+check(num);
+>check(num) : boolean
+>check : <T>(x: T) => boolean
+>num : 1
+

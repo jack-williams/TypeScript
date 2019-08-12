@@ -313,14 +313,14 @@ function f90<T extends S2, K extends keyof S2>(x1: S2[keyof S2], x2: T[keyof S2]
 }
 
 function f91<T, K extends keyof T>(x: T, y: T[keyof T], z: T[K]) {
-    let a: {};
+    let a: unknown;
     a = x;
     a = y;
     a = z;
 }
 
 function f92<T, K extends keyof T>(x: T, y: T[keyof T], z: T[K]) {
-    let a: {} | null | undefined;
+    let a: unknown;
     a = x;
     a = y;
     a = z;
@@ -609,7 +609,7 @@ interface I {
 declare function take<T>(p: T): void;
 
 function fn<T extends I, K extends keyof T>(o: T, k: K) {
-    take<{} | null | undefined>(o[k]);
+    take<unknown>(o[k]);
     take<any>(o[k]);
 }
 
@@ -617,7 +617,7 @@ function fn<T extends I, K extends keyof T>(o: T, k: K) {
 
 class Unbounded<T> {
     foo(x: T[keyof T]) {
-        let y: {} | undefined | null = x;
+        let y: unknown = x;
     }
 }
 

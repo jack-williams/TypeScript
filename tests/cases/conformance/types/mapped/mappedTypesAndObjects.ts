@@ -25,7 +25,8 @@ interface Base {
     baz: any;
 }
 
-interface E1<T> extends Base {
+// default constraint is unknown so use explicit {}
+interface E1<T extends {}> extends Base {
     foo: T;
 }
 

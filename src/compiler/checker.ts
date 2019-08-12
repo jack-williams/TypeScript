@@ -13485,7 +13485,7 @@ namespace ts {
                         const constraint = getConstraintOfType(<TypeVariable>source);
                         if (!constraint || (source.flags & TypeFlags.TypeParameter && constraint.flags & TypeFlags.Any)) {
                             // A type variable with no constraint is not related to the non-primitive object type.
-                            if (result = isRelatedTo(emptyObjectType, extractTypesOfKind(target, ~TypeFlags.NonPrimitive))) {
+                            if (result = isRelatedTo(unknownType, extractTypesOfKind(target, ~TypeFlags.NonPrimitive))) {
                                 errorInfo = saveErrorInfo;
                                 return result;
                             }

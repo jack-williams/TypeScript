@@ -166,6 +166,7 @@ class C1 {
 }
 
 // Type parameter with explicit 'unknown' constraint not assignable to '{}'
+// Type parameter without explicit 'unknown' constraint not assignable to '{}'
 
 function f30<T, U extends unknown>(t: T, u: U) {
     let x: {} = t;

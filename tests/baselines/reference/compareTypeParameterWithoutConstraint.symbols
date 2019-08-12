@@ -1,0 +1,83 @@
+=== tests/cases/compiler/compareTypeParameterWithoutConstraint.ts ===
+// @strict
+
+const isNum = (v: unknown) => {
+>isNum : Symbol(isNum, Decl(compareTypeParameterWithoutConstraint.ts, 2, 5))
+>v : Symbol(v, Decl(compareTypeParameterWithoutConstraint.ts, 2, 15))
+
+  if (typeof v !== 'number') throw new Error('Not a number');
+>v : Symbol(v, Decl(compareTypeParameterWithoutConstraint.ts, 2, 15))
+>Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+  return v;
+>v : Symbol(v, Decl(compareTypeParameterWithoutConstraint.ts, 2, 15))
+
+};
+const isString = (v: unknown) => {
+>isString : Symbol(isString, Decl(compareTypeParameterWithoutConstraint.ts, 6, 5))
+>v : Symbol(v, Decl(compareTypeParameterWithoutConstraint.ts, 6, 18))
+
+  if (typeof v !== 'string') throw new Error('Not a string');
+>v : Symbol(v, Decl(compareTypeParameterWithoutConstraint.ts, 6, 18))
+>Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+  return v;
+>v : Symbol(v, Decl(compareTypeParameterWithoutConstraint.ts, 6, 18))
+
+};
+
+// no errors on comparison
+function makeExampleValue<T>(validator: (v: unknown) => T): unknown {
+>makeExampleValue : Symbol(makeExampleValue, Decl(compareTypeParameterWithoutConstraint.ts, 9, 2))
+>T : Symbol(T, Decl(compareTypeParameterWithoutConstraint.ts, 12, 26))
+>validator : Symbol(validator, Decl(compareTypeParameterWithoutConstraint.ts, 12, 29))
+>v : Symbol(v, Decl(compareTypeParameterWithoutConstraint.ts, 12, 41))
+>T : Symbol(T, Decl(compareTypeParameterWithoutConstraint.ts, 12, 26))
+
+  if (validator === isNum) return 42;
+>validator : Symbol(validator, Decl(compareTypeParameterWithoutConstraint.ts, 12, 29))
+>isNum : Symbol(isNum, Decl(compareTypeParameterWithoutConstraint.ts, 2, 5))
+
+  if (validator === isString) return 'something';
+>validator : Symbol(validator, Decl(compareTypeParameterWithoutConstraint.ts, 12, 29))
+>isString : Symbol(isString, Decl(compareTypeParameterWithoutConstraint.ts, 6, 5))
+
+  throw new Error('unknown type');
+>Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+}
+
+/*
+ * check and check2 should type-check identically
+ */
+
+const num = 1;
+>num : Symbol(num, Decl(compareTypeParameterWithoutConstraint.ts, 22, 5))
+
+function check<T>(x: T) {
+>check : Symbol(check, Decl(compareTypeParameterWithoutConstraint.ts, 22, 14))
+>T : Symbol(T, Decl(compareTypeParameterWithoutConstraint.ts, 23, 15))
+>x : Symbol(x, Decl(compareTypeParameterWithoutConstraint.ts, 23, 18))
+>T : Symbol(T, Decl(compareTypeParameterWithoutConstraint.ts, 23, 15))
+
+  return x === num; // no error
+>x : Symbol(x, Decl(compareTypeParameterWithoutConstraint.ts, 23, 18))
+>num : Symbol(num, Decl(compareTypeParameterWithoutConstraint.ts, 22, 5))
+}
+check(num);
+>check : Symbol(check, Decl(compareTypeParameterWithoutConstraint.ts, 22, 14))
+>num : Symbol(num, Decl(compareTypeParameterWithoutConstraint.ts, 22, 5))
+
+function check2<T extends unknown>(x: T) {
+>check2 : Symbol(check2, Decl(compareTypeParameterWithoutConstraint.ts, 26, 11))
+>T : Symbol(T, Decl(compareTypeParameterWithoutConstraint.ts, 28, 16))
+>x : Symbol(x, Decl(compareTypeParameterWithoutConstraint.ts, 28, 35))
+>T : Symbol(T, Decl(compareTypeParameterWithoutConstraint.ts, 28, 16))
+
+  return x === num; // no error
+>x : Symbol(x, Decl(compareTypeParameterWithoutConstraint.ts, 28, 35))
+>num : Symbol(num, Decl(compareTypeParameterWithoutConstraint.ts, 22, 5))
+}
+check(num);
+>check : Symbol(check, Decl(compareTypeParameterWithoutConstraint.ts, 22, 14))
+>num : Symbol(num, Decl(compareTypeParameterWithoutConstraint.ts, 22, 5))
+
