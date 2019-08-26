@@ -1,0 +1,103 @@
+=== tests/cases/compiler/relatingToIndexedAccessTypesWithoutMutation.ts ===
+// @strict
+
+// Repro of #32816
+
+type Target<T> = T extends null ? null : T;
+>Target : Symbol(Target, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 0, 0))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 4, 12))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 4, 12))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 4, 12))
+
+type Target2<T> = { "one": null, "two": T }[T extends null ? "one" : "two"];
+>Target2 : Symbol(Target2, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 4, 43))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 5, 13))
+>"one" : Symbol("one", Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 5, 19))
+>"two" : Symbol("two", Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 5, 32))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 5, 13))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 5, 13))
+
+type Target3<T> = [null, T][T extends null ? 0 : 1];
+>Target3 : Symbol(Target3, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 5, 76))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 6, 13))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 6, 13))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 6, 13))
+
+function tst<T extends string>() {
+>tst : Symbol(tst, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 6, 52))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 8, 13))
+
+    // These two pass as expected:
+    const case0: Target2<T | null> = 1 as any as Target2<T | null>;
+>case0 : Symbol(case0, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 10, 9))
+>Target2 : Symbol(Target2, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 4, 43))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 8, 13))
+>Target2 : Symbol(Target2, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 4, 43))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 8, 13))
+
+    const case1: { prop: Target<T | null> } = 1 as any as { prop: Target<T | null> };
+>case1 : Symbol(case1, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 11, 9))
+>prop : Symbol(prop, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 11, 18))
+>Target : Symbol(Target, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 0, 0))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 8, 13))
+>prop : Symbol(prop, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 11, 59))
+>Target : Symbol(Target, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 0, 0))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 8, 13))
+
+    const case2: { prop: Target2<T> } = 1 as any as { prop: Target2<T> };
+>case2 : Symbol(case2, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 12, 9))
+>prop : Symbol(prop, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 12, 18))
+>Target2 : Symbol(Target2, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 4, 43))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 8, 13))
+>prop : Symbol(prop, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 12, 53))
+>Target2 : Symbol(Target2, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 4, 43))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 8, 13))
+
+    const case3: { prop: Target3<T> } = 1 as any as { prop: Target3<T> };
+>case3 : Symbol(case3, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 13, 9))
+>prop : Symbol(prop, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 13, 18))
+>Target3 : Symbol(Target3, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 5, 76))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 8, 13))
+>prop : Symbol(prop, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 13, 53))
+>Target3 : Symbol(Target3, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 5, 76))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 8, 13))
+
+    // These two fail as expected:
+    const case4: { prop: Target2<T> } = 1 as any as { prop: Target2<T | null> };
+>case4 : Symbol(case4, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 16, 9))
+>prop : Symbol(prop, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 16, 18))
+>Target2 : Symbol(Target2, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 4, 43))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 8, 13))
+>prop : Symbol(prop, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 16, 53))
+>Target2 : Symbol(Target2, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 4, 43))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 8, 13))
+
+    const case5: { prop: Target3<T> } = 1 as any as { prop: Target3<T | null> };
+>case5 : Symbol(case5, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 17, 9))
+>prop : Symbol(prop, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 17, 18))
+>Target3 : Symbol(Target3, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 5, 76))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 8, 13))
+>prop : Symbol(prop, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 17, 53))
+>Target3 : Symbol(Target3, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 5, 76))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 8, 13))
+
+    // These two are expected to pass, but fail:
+    const case6: { prop: Target2<T | null> } = 1 as any as { prop: Target2<T | null> };
+>case6 : Symbol(case6, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 20, 9))
+>prop : Symbol(prop, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 20, 18))
+>Target2 : Symbol(Target2, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 4, 43))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 8, 13))
+>prop : Symbol(prop, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 20, 60))
+>Target2 : Symbol(Target2, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 4, 43))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 8, 13))
+
+    const case7: { prop: Target3<T | null> } = 1 as any as { prop: Target3<T | null> };
+>case7 : Symbol(case7, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 21, 9))
+>prop : Symbol(prop, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 21, 18))
+>Target3 : Symbol(Target3, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 5, 76))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 8, 13))
+>prop : Symbol(prop, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 21, 60))
+>Target3 : Symbol(Target3, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 5, 76))
+>T : Symbol(T, Decl(relatingToIndexedAccessTypesWithoutMutation.ts, 8, 13))
+}
+
