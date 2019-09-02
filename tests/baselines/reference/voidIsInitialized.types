@@ -1,0 +1,15 @@
+=== tests/cases/compiler/voidIsInitialized.ts ===
+const x: void = undefined;
+>x : void
+>undefined : undefined
+
+if(typeof x === "undefined") {
+>typeof x === "undefined" : boolean
+>typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
+>x : void
+>"undefined" : "undefined"
+
+    x // no error
+>x : void
+}
+
